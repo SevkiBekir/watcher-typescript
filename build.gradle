@@ -1,0 +1,288 @@
+import com.bmuschko.gradle.docker.tasks.image.Dockerfile
+import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
+import com.bmuschko.gradle.docker.tasks.image.DockerRemoveImage
+import com.bmuschko.gradle.docker.tasks.container.DockerCreateContainer
+import com.bmuschko.gradle.docker.tasks.container.DockerStartContainer
+import com.bmuschko.gradle.docker.tasks.container.DockerStopContainer
+import com.bmuschko.gradle.docker.tasks.container.DockerRemoveContainer
+
+apply plugin: "sonar-runner"
+
+repositories {
+    /*
+    maven { url "http://10.10.10.100/nexus/content/groups/public" }
+    */
+    mavenCentral()
+}
+
+buildscript {
+    ext {
+        springBootVersion = '1.3.3.RELEASE'
+        springLdapVersion = '2.0.4.RELEASE'
+        //kotlinVersion = '1.0.1'
+        camelVersion = '2.17.0'
+        guavaVersion = '19.0'
+        retrofitVersion = '2.0.2'
+    }
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        /* maven { url "http://10.10.10.100/nexus/content/groups/public" }
+        maven { url "http://10.10.10.100/nexus/content/repositories/jcenter-repo" }*/
+        jcenter()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+        classpath("com.moowork.gradle:gradle-node-plugin:0.12")
+        classpath("com.moowork.gradle:gradle-gulp-plugin:0.12")
+        classpath("com.bmuschko:gradle-docker-plugin:2.6.8")
+        // classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}")
+    }
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.12'
+}
+
+configure(allprojects){
+    sonarRunner {
+        sonarProperties {
+            property "sonar.sourceEncoding", "UTF-8"
+            property "sonar.junit.reportsPath", "$buildDir/test-results/"
+        }
+    }
+}
+
+configure(subprojects - project(':web')) {
+    apply plugin: 'java'
+    // apply plugin: 'kotlin'
+    apply plugin: 'eclipse'
+    apply plugin: 'idea'
+    apply plugin: 'spring-boot'
+    apply plugin: 'jacoco'
+
+    jar.version = '0.0.1-SNAPSHOT'
+
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+    repositories {
+        mavenLocal()
+        /*
+        maven { url "http://10.10.10.100/nexus/content/groups/public" }
+        maven { url "http://10.10.10.100/nexus/content/repositories/jcenter-repo" }
+        */
+        mavenCentral()
+        jcenter()
+    }
+
+    dependencies {
+        compile("org.projectlombok:lombok:1.16.8")
+        compile("com.google.guava:guava:${guavaVersion}")
+        compile('org.springframework.boot:spring-boot-starter-data-mongodb')
+        // compile("org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}")
+        testCompile('org.springframework.boot:spring-boot-starter-test')
+        compile("com.squareup.retrofit2:retrofit:${retrofitVersion}")
+        compile("com.squareup.retrofit2:converter-jackson:${retrofitVersion}")
+    }
+
+
+    eclipse {
+        classpath {
+            containers.remove('org.eclipse.jdt.launching.JRE_CONTAINER')
+            containers 'org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8'
+        }
+    }
+
+
+    jacoco {
+        toolVersion = "0.7.4.201502262128"
+    }
+
+    jacocoTestReport {
+        reports {
+            xml.enabled false
+            csv.enabled false
+            html.destination "${buildDir}/jacocoHtml"
+        }
+    }
+}
+
+project(':domain') {
+    jar {
+        baseName = 'watcher-domain'
+    }
+    dependencies {
+        compile('com.fasterxml.jackson.core:jackson-annotations')
+        compile("javax.ws.rs:javax.ws.rs-api:2.0")
+        compile("org.hibernate:hibernate-validator")
+        compile('org.springframework.boot:spring-boot-starter-data-mongodb')
+    }
+}
+project(':services') {
+    jar {
+        baseName = 'watcher-services'
+    }
+    dependencies {
+        compile project(':domain')
+        compile('org.springframework.boot:spring-boot-starter')
+        compile('com.fasterxml.jackson.core:jackson-databind')
+        compile("org.springframework.ldap:spring-ldap-core:$springLdapVersion")
+        compile("org.apache.camel:camel-spring:$camelVersion")
+        compile('org.springframework.boot:spring-boot-starter-web')
+        compile("org.apache.camel:camel-spring-boot-starter:$camelVersion")
+        compile("org.apache.camel:camel-spring:$camelVersion")
+        compile("org.apache.camel:camel-cxf:$camelVersion")
+        compile("org.apache.camel:camel-quartz2:$camelVersion")
+        compile("org.apache.camel:camel-jackson:$camelVersion")
+        compile("com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:2.6.5")
+        compile("javax.ws.rs:javax.ws.rs-api:2.0")
+
+        testCompile group: "org.apache.camel", name: "camel-test", version: "${camelVersion}"
+
+    }
+}
+
+project(':rest-api') {
+    apply plugin: 'com.bmuschko.docker-remote-api'
+
+    jar {
+        baseName = 'watcher'
+    }
+
+    dependencies {
+        compile project(':domain')
+        compile project(':services')
+        compile project(':web')
+        compile('org.springframework.boot:spring-boot-starter-actuator')
+        compile('org.springframework.boot:spring-boot-devtools')
+        compile('org.springframework.boot:spring-boot-starter-hateoas')
+        compile('org.springframework.boot:spring-boot-starter-security')
+        compile('org.springframework.boot:spring-boot-starter-web')
+        compile("org.hibernate:hibernate-validator")
+
+        compile('com.fasterxml.jackson.core:jackson-databind')
+        runtime('com.fasterxml.jackson.datatype:jackson-datatype-jdk7')
+        runtime('com.fasterxml.jackson.datatype:jackson-datatype-jdk8')
+        runtime('com.fasterxml.jackson.datatype:jackson-datatype-jsr310')
+        compile("org.apache.camel:camel-spring-boot-starter:$camelVersion")
+        compile("org.apache.cxf:cxf-rt-transports-http-jetty:3.1.5")
+    }
+
+    compileJava.dependsOn(processResources)
+
+    docker {
+        url "http://${dockerRemoteUrl}:2375"
+        apiVersion '1.21'
+    }
+
+    task createDockerfile(type: Dockerfile) {
+        destFile = project.file('build/libs/Dockerfile')
+        from 'docker.io/anapsix/alpine-java:jdk8'
+
+        copyFile(jar.archivePath.name, '/opt/watcher/watcher.jar')
+        workingDir '/opt/watcher'
+        exposePort 8090
+        defaultCommand('java', '-jar', '-Dspring.profiles.active=production', '-Duser.timezone=Europe/Istanbul', 'watcher.jar')
+    }
+
+    task buildImage(type: DockerBuildImage) {
+        dependsOn createDockerfile
+        inputDir = createDockerfile.destFile.parentFile
+        tag = dockerImageName
+    }
+
+    task createContainer(type: DockerCreateContainer) {
+        dependsOn buildImage
+        targetImageId { dockerImageName }
+        containerName = dockerContainerName
+        links = ["${dockerMongodbLink}:watchermongodb"]
+        portBindings = ["${dockerExposePort}:8090"]
+        binds = ['/etc/localtime': '/etc/localtime']
+        env = ["JAVA_OPTIONS=-Dhttp.proxyHost=aproxy -Dhttp.proxyPort=8080 -Dhttps.proxyHost=aproxy -Dhttps.proxyPort=8080 -Dhttp.proxyUser=${dockerProxy} -Dhttp.proxyPassword=${dockerProxyPassword}"]
+    }
+
+    task startContainer(type: DockerStartContainer) {
+        dependsOn createContainer
+        targetContainerId { createContainer.getContainerId() }
+    }
+
+    task stopContainer(type: DockerStopContainer) {
+        targetContainerId { dockerContainerName }
+    }
+
+    task removeContainer(type: DockerRemoveContainer) {
+        dependsOn stopContainer
+        targetContainerId { stopContainer.getContainerId() }
+    }
+
+    task removeImage(type: DockerRemoveImage) {
+        dependsOn removeContainer
+        targetImageId { dockerImageName }
+    }
+
+
+    task redeploy(dependsOn: build) {
+        dependsOn removeImage
+        finalizedBy startContainer
+    }
+
+}
+
+project(':web') {
+    apply plugin: 'java'
+    apply plugin: 'com.moowork.node'
+    apply plugin: 'com.moowork.gulp'
+
+    node {
+        version = '5.10.1'
+        download = true
+    }
+
+    jar {
+        from 'dist'
+        eachFile { details ->
+            details.path = details.path.startsWith('META-INF') ?: 'static/' + details.path
+        }
+        // Jar has duplicate empty folders (see http://issues.gradle.org/browse/GRADLE-1830)
+        // So we need to set includeEmptyDirs to false
+        includeEmptyDirs = false
+        baseName = 'watcher-web'
+    }
+
+    task jspmInstall(type: NpmTask, dependsOn: npmInstall) {
+        description = 'Installs jspm packages'
+        inputs.files 'package.json', 'config.js'
+        outputs.dir 'jspm_packages'
+        outputs.files 'config.js'
+        args = ['run', 'jspm-install']
+    }
+
+    gulp_default.dependsOn 'installGulp'
+    gulp_default.dependsOn 'npmInstall'
+    gulp_default.dependsOn 'jspmInstall'
+
+    gulp_clean.dependsOn 'installGulp'
+    gulp_clean.dependsOn 'npmInstall'
+
+    task jspmBundle(type: NpmTask, dependsOn: gulp_default) {
+        description = 'Bundles jspm packages'
+        inputs.files 'package.json', 'config.js'
+        inputs.dir 'app'
+        outputs.dir 'jspm_packages'
+        outputs.files 'config.js', 'dist/bundle.min.js'
+
+        args = ['run', 'jspm-bundle-sfx']
+    }
+
+    if (! System.properties['sonar.host.url']) {
+        println "Linking jspmBundle to jar"
+        jar.dependsOn 'jspmBundle'
+
+        println "Linking gulp clean to clean"
+        clean.dependsOn 'gulp_clean'
+    } else{
+        println "Skipping gulp_clean and jspmBundle in sonar run!"
+    }
+
+}

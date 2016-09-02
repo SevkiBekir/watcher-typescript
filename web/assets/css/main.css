@@ -1,0 +1,25 @@
+html {
+  font-family: 'Roboto', sans-serif;
+}
+
+body {
+  font-size: 13px;
+  line-height: 20px;
+  background: rgba(9, 30, 36, 0.9);
+}
+#parent {
+ display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+}
+#child5{
+  margin-top:10px;
+}
+#buttonBox{
+  display: flex;
+  justify-content:space-around;
+}
+#toggleCheck{
+  display:flex;
+  justify-content:space-around;
+}

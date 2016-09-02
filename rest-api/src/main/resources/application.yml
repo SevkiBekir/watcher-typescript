@@ -1,0 +1,34 @@
+security:
+  user:
+    name: admin
+    password: admin1
+server:
+  port: 8090
+spring:
+  data:
+    mongodb:
+      uri: mongodb://localhost/legalitekhy
+
+---
+
+spring:
+  profiles: default
+  resources:
+    static-locations: ['classpath:/static/', 'file:../web/']
+
+---
+
+spring:
+  profiles: development
+  resources:
+    static-locations: ['classpath:/static/', 'file:../web/']
+
+
+---
+
+spring:
+  profiles: production
+  data:
+    mongodb:
+      uri: mongodb://legalitekhymongodb/legalitekhy
+
