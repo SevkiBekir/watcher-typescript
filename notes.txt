@@ -1,0 +1,10 @@
+ <button className="ui primary button"
+                                name="Update"
+                                onClick={ e => this.handleOnClick(e) }
+                        >Update
+                        </button>
+                        <button className="ui button primary"
+                                name="Sorgula"
+                                onClick={ e => this.handleOnClickSorgula(e) }
+                        >Sorgula
+                        </button>

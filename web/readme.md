@@ -9,3 +9,10 @@
 * jspm install
 
 jspm install material-ui=npm:material-ui
+
+Install: Semantic-UI
+
+jspm install semantic-ui=github:Semantic-Org/Semantic-UI -o "{ 'directories': { 'lib': 'dist' }, main: 'semantic', 'shim': { 'semantic': { 'deps': [ 'jquery', 'semantic-ui/semantic.css!' ] } }, 'dependencies': { 'jquery': 'github:components/jquery', 'css': 'github:systemjs/plugin-css' } }"
+
+
+

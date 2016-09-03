@@ -1,6 +1,12 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 
+
+var divStyle = {
+    display: 'none',
+
+};
+
 enum EmailEkTipi{
     HICBIRI, EXCEL, PDF
 }
@@ -143,32 +149,410 @@ export class SorguView extends React.Component<SorguProps,SorguStates> {
         })
     }
 
+
+
+
+    componentDidMount (){
+        $(this.refs.dropSorgu).dropdown();
+    }
+
     render() {
         return (
-            <h1>
+            <div ClassName="fields">
 
-                <button className="ui primary button"
-                    name="Update"
-                    onClick={ e => this.handleOnClick(e) }
-                >Update
-                </button>
-                <button className="ui button"
-                    name="Sorgula"
-                    onClick={ e => this.handleOnClickSorgula(e) }
-                >Sorgula
-                </button>
-            </h1>
+                <div className="field">
+                    <label>Sorgu</label>
+                    <div className="ui selection dropdown" ref="dropSorgu">
+                        <input type="hidden" name="selSorgu"/>
+                        <div className="default text">Seçiniz</div>
+                        <i className="dropdown icon"></i>
+                            <div className="menu">
+                                <div className="item" data-value="sorgu1">
+
+                                    Sorgu 1
+                                </div>
+                                <div className="item" data-value="sorgu2">
+
+                                    Sorgu 2
+                                </div>
+                                <div className="item" data-value="sorgu3">
+
+                                    Sorgu 3
+                                </div>
+                            </div>
+                    </div>
+                 </div>
+
+                <div className="field">
+                    <label>Açıklama</label>
+                    <input type="text" placeholder="Açıklama Giriniz"/>
+                </div>
+
+                <div className="inline fields">
+                    <div className="field">
+
+                        <label>Burak-1 Sorgusu</label>
+                        <textarea rows="4">select ID as Dosya_Id from dosya d;</textarea>
+                    </div>
+                    <div className="inline fields">
+                        <div className="field">
+                        <button className="ui red circular icon button" data-tooltip="Rename SQL statement">
+                            <i className="write  icon"></i>
+                        </button> </div>
+                        <div className="field">
+                        <button className="ui green circular icon button" data-tooltip="Check/Validate SQL statement">
+                            <i className="checkmark icon"></i>
+                        </button> </div>
+                        <div className="field">
+                        <button className="ui blue circular icon button" data-tooltip="Save SQL statement">
+                            <i className="save icon"></i>
+                        </button> </div>
+                    </div>
+
+                </div>
+                <div className="field">
+                    <button className="ui orange  right floated button ">
+                        <i className="zoom icon"></i>
+                        Alt Sorgu Ekle
+                    </button>
+                </div>
+
+                <div className="field">
+                    <br/>
+                    <hr/>
+                </div>
+
+            </div>
+
+
         );
 
     }
 }
 
+export class AltSorguView extends React.Component<SorguProps,SorguStates> {
+
+
+    constructor(props: SorguProps, context: any) {
+        super(props, context);
+    }
+
+    render() {
+        return (
+            <div ClassName="fields">
+                <div className="inline fields">
+                    <div className="field">
+
+                        <label>Alt Sorgu -1</label>
+                        <textarea rows="4">select id as Dosya_Id from dosya d where u.name="Şevki" join users u on d.userId=u.id;</textarea>
+                    </div>
+                    <div className="inline fields">
+                        <div className="field">
+                            <button className="ui red circular icon button" data-tooltip="Rename SQL statement">
+                                <i className="write  icon"></i>
+                            </button> </div>
+                        <div className="field">
+                            <button className="ui green circular icon button" data-tooltip="Check/Validate SQL statement">
+                                <i className="checkmark icon"></i>
+                            </button> </div>
+                        <div className="field">
+                            <button className="ui blue circular icon button" data-tooltip="Save SQL statement">
+                                <i className="save icon"></i>
+                            </button> </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        )}
+}
+
+
+export class TetikleyiciView extends React.Component<SorguProps,SorguStates> {
+
+
+    constructor(props: SorguProps, context: any) {
+        super(props, context);
+    }
+
+    componentDidMount (){
+        $(this.refs.dropTetikleyici).dropdown();
+        $('.ui.checkbox')
+            .checkbox();
+    }
+
+    render() {
+        return (
+            <div ClassName="fields">
+                <div className="field">
+                    <label>Tetikleyici Adı:</label>
+                    <input type="text" placeholder="Tetikleyici Adı Giriniz"/>
+                </div>
+                <div className="field">
+                    <label>Tetikleyici Tipi</label>
+                    <div className="ui selection dropdown" ref="dropTetikleyici">
+                        <input type="hidden" name="selTetikleyici"/>
+                        <div className="default text">Seçiniz</div>
+                        <i className="dropdown icon"></i>
+                        <div className="menu">
+                            <div className="item" data-value="CRON">
+                                CRON
+                            </div>
+                            <div className="item" data-value="SIMPLE">
+                                SIMPLE
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div className="field">
+                    <label>CRON/SİMPLE İfadesi:</label>
+                    <input type="text" placeholder="CRON/SİMPLE İfadesi Giriniz"/>
+                </div>
+                <div className="field">
+                    <label>Açıklama</label>
+                    <input type="text" placeholder="Açıklama Giriniz"/>
+                </div>
+                <div className="field">
+                    <div className="ui vertically divided grid">
+                        <div className="two column row">
+                            <div className="eight wide column">
+                                <div className="fields">
+                                    <div className="field">
+                                        <label>Durum</label>
+                                    </div>
+                                    <div className="field">
+                                        <div className="ui toggle checkbox">
+                                            <input type="checkbox" tabindex="0" className="hidden"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="eight wide column">
+                                <div className="ui right floated checkbox ">
+                                    <input type="checkbox" tabindex="0" className="hidden"/>
+                                    <label>Bildirim Grubuna Ekle</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        )}
+}
+
+export class BildirimView extends React.Component<SorguProps,SorguStates> {
+
+
+    constructor(props: SorguProps, context: any) {
+        super(props, context);
+    }
+
+    componentDidMount (){
+        $(this.refs.dropBildirim).dropdown();
+        $('.ui.checkbox').checkbox();
+        $('.checked').checkbox("check");
+        $(this.refs.search).attr("multiple"," ");
+        $(this.refs.search).addClass("ui fluid search dropdown multiple");
+        $(this.refs.search).dropdown();
+        var maxLength = 160;
+        $(this.refs.txtSMS).keyup(function(event) {
+
+            var length = $(this).val().length;
+            if (length >= maxLength) {
+                $(this).val($(this).val().substring(0,maxLength));
+                $("#lRemain").text("Mesaj limiti doldu!");
+                $("#lRemain").addClass("red");
+                $("#lRemain").removeClass("orange");
+
+            }
+            else {
+                $("#lRemain").text(maxLength - length);
+            }
+
+
+
+        });
+    }
+
+    render() {
+        return (
+            <div ClassName="fields">
+
+                <div className="field">
+                    <label>Bİldirim Grubu</label>
+                    <div className="ui selection dropdown" ref="dropBildirim">
+                        <input type="hidden" name="selBildirim"/>
+                        <div className="default text">Seçiniz</div>
+                        <i className="dropdown icon"></i>
+                        <div className="menu">
+                            <div className="item" data-value="Sec1">
+                                Seç-1
+                            </div>
+                            <div className="item" data-value="Sec2">
+                                Seç-2
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div className="field">
+                    <div className="ui vertically divided grid">
+                        <div className="two column row">
+                            <div className="eight wide column">
+                                <div className="inline fields">
+                                   <div className="field">
+                                        <label>Bildirim Yöntemi</label>
+                                   </div>
+                                    <div className=" field">
+                                        <div className="field">
+                                            <div className="ui red segment">
+                                                <div className="field">
+                                                    <div className="ui disabled checkbox checked">
+                                                        <input type="checkbox" tabindex="0" className="hidden"/>
+                                                        <label>Watcher</label>
+                                                    </div>
+                                                </div>
+                                                <div className="field">
+                                                    <div className="ui checkbox checked">
+                                                        <input type="checkbox" tabindex="0" className="hidden" checked=""/>
+                                                        <label>Email</label>
+                                                    </div>
+                                                </div>
+                                                <div className="field">
+                                                    <div className="ui  checkbox ">
+                                                        <input type="checkbox" tabindex="0" className="hidden"/>
+                                                        <label>SMS</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="eight wide column">
+                                <div className="inline fields">
+                                    <div className="field">
+                                        <label>Email Ek Tipi </label>
+                                    </div>
+                                    <div className="field">
+                                        <div className="fields">
+                                            <div className="ui blue segment">
+                                                <div className="field">
+                                                    <div className="ui radio checkbox">
+                                                        <input type="radio" name="frequency" checked="checked"/>
+                                                            <label>Excell</label>
+                                                    </div>
+                                                </div>
+                                                <div className="field">
+                                                    <div className="ui radio checkbox">
+                                                        <input type="radio" name="frequency"/>
+                                                        <label>PDF</label>
+                                                    </div>
+                                                </div>
+                                                <div className="field">
+                                                    <div className="ui radio checkbox">
+                                                        <input type="radio" name="frequency"/>
+                                                        <label>Hiçbiri</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div ClassName="field">
+
+                    <div ClassName="inline fields">
+
+                        <div ClassName="field">
+                            <label>Alıcılar</label>
+                            <select multiple="" ref="search">
+                                <option value="">Kişi Ekle</option>
+                                <option value="bkocadag">Şevki KOCADAĞ</option>
+                                <option value="gcan">Göksel CAN</option>
+                                <option value="hsarioglu">Hatice SARIOĞLU</option>
+                                <option value="innova-musd">Innova-MUSD</option>
+                            </select>
+
+                        </div>
+                    </div>
+                </div>
+                <div ClassName="field">
+                    <label>Email Metni</label>
+                    <textarea rows="4">Sayın Kullanıcı Burak-1 sonucunda ekteki sonuç alınmıştır.</textarea>
+                </div>
+                <div ClassName="field">
+                    <label>SMS Metni</label>
+                    <textarea rows="2" placeholder="SMS metni giriniz" ref="txtSMS"></textarea>
+                </div>
+                <br/>
+                <div ClassName="field">
+                    <div ClassName="fields">
+                        <div ClassName="field">
+                            <label className="ui horizontal label">Tahmini Mesaj Sayısı:</label>
+                            <label className="ui horizontal circular blue label">1</label>
+                        </div>
+                        <div ClassName="inline fields">
+                            <label className="ui horizontal label">Kalan Karakter Sayısı:</label>
+                            <label id="lRemain" className="ui horizontal orange circular label">160</label>
+
+                        </div>
+                        <div ClassName="field">
+                            <button className="ui green  right floated button ">
+                                <i className="save icon"></i>
+                                Kaydet
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+
+        )}
+}
+
 export class App extends React.Component {
     render() {
         return (
-            <div>
-                <SorguView name="aaa" sql="bb" aciklama="cc"/>
-            </div>);
-    }
+        <div className="ui  container">
+            <div className="ui vertically divided grid">
+                <div className="one column row">
+                    <div className="column">
+                        <div className="ui top attached tabular menu">
+                            <div className="active item">Tab</div>
+                        </div>
+                        <div className="ui bottom attached active tab segment">
+                            <form className="ui form">
+                                <div className="ui vertically divided grid">
+                                    <div className="three column row">
+                                        <div className="seven wide column">
+                                            <SorguView name="aaa" sql="bb" aciklama="cc"/>
+                                            <AltSorguView />
+                                            <AltSorguView />
+
+
+                                        </div>
+                                        <div className="nine wide column">
+                                            <TetikleyiciView/>
+                                            <br/>
+                                            <BildirimView/>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </form>
+                        </div>
+                     </div>
+                </div>
+            </div>
+        </div>
+
+        )}
 }
 ReactDOM.render(<App />, document.getElementById("react"));

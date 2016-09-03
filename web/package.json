@@ -3,6 +3,7 @@
     "name": "app",
     "main": "app.js",
     "dependencies": {
+      "jquery": "npm:jquery@^3.1.0",
       "material-ui": "npm:material-ui@^0.15.4",
       "semantic-ui": "github:Semantic-Org/Semantic-UI@^2.2.4"
     },
@@ -68,6 +69,9 @@
         "ignore": [
           "test.js"
         ]
+      },
+      "npm:jquery@3.1.0": {
+        "format": "amd"
       },
       "npm:lodash@4.15.0": {
         "map": {
