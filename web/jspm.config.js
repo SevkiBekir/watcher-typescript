@@ -69,7 +69,8 @@ SystemJS.config({
     "url": "github:jspm/nodelibs-url@0.2.0-alpha",
     "util": "github:jspm/nodelibs-util@0.2.0-alpha",
     "vm": "github:jspm/nodelibs-vm@0.2.0-alpha",
-    "zlib": "github:jspm/nodelibs-zlib@0.2.0-alpha"
+    "zlib": "github:jspm/nodelibs-zlib@0.2.0-alpha",
+    "react-global": "npm:react-global@0.1.8"
   },
   packages: {
     "github:jspm/nodelibs-crypto@0.2.0-alpha": {

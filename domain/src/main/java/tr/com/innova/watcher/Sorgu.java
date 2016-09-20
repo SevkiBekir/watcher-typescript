@@ -16,9 +16,11 @@ public class Sorgu {
     @NotEmpty
     String _id;
     public String userName;
-    String anaSorgu;
-    String aciklama;
-    List<String> altSorguList;
-    Tetikleyici tetikleyici;
+    public String anaSorgu;
+    public String aciklama;
+    public List<String> altSorguList;
+    public Tetikleyici tetikleyici;
+    public String sName;
+
 
 }

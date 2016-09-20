@@ -31,6 +31,16 @@ public class SorguService {
         return ResponseEntity.ok(this.repository.findOne(id));
     }
 
+    @RequestMapping(value = "/findAllSorgu", method = RequestMethod.GET)
+    public ResponseEntity findAllSorgu() {
 
+        return ResponseEntity.ok(this.repository.findAll());
+    }
+
+    @RequestMapping(value = "/saveSorgu", method = RequestMethod.POST)
+    public ResponseEntity saveSorgu(/*@Valid */@RequestBody Sorgu sorgu) {
+
+        return ResponseEntity.ok(this.repository.save(sorgu));
+    }
 
 }

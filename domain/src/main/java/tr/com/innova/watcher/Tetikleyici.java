@@ -1,9 +1,8 @@
 package tr.com.innova.watcher;
 
 /**
- * Created by ysatici on 01.08.2016.
+ * Created by SBK on 20.09.2016.
  */
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
@@ -11,14 +10,16 @@ import lombok.Data;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Tetikleyici {
 
-    String tetikleyiciAdi;
-    String aciklama;
-    String tetikleyiciIcerik;
-    boolean durum;
-    BildirimGrubu bildirimGrubu;
+    public String tetikleyiciAdi;
+    public String aciklama;
+    public String tetikleyiciIcerik;
+    public boolean durum;
+    //public BildirimGrubu bildirimGrubu;
+    public NotificationGroup notificationGroup;
     public enum TetikleyiciTipi{
         CRON, SIMPLE
-    };
-    TetikleyiciTipi tip;
-    boolean bildirimEkle;
+    }
+
+    public TetikleyiciTipi tip;
+    public boolean bildirimEkle;
 }
