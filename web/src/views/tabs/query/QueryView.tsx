@@ -30,6 +30,7 @@ export class QueryView extends React.Component<SorguProps,SorguStates> {
 
 
 
+
     }
 
 
@@ -134,6 +135,7 @@ export class QueryView extends React.Component<SorguProps,SorguStates> {
 
     componentDidMount (){
         $(this.refs.dropSorgu).dropdown();
+        $(this.refs.divNewQuery).hide();
     }
 
 
@@ -150,15 +152,32 @@ export class QueryView extends React.Component<SorguProps,SorguStates> {
             $(this.refs.txtAciklama).val(this.state.sorguList[dropSelected['selected'][0]].aciklama);
             $(this.refs.txtSorgu).val(this.state.sorguList[dropSelected['selected'][0]].anaSorgu);
             this.props.toMainData(this.state.sorguList[dropSelected['selected'][0]]);
+            this.props.toMainClearOK(false);
 
         }
 
     }
-
+    /*
     gonder(){
 
         return {state: this.state.sorguList, selected:dropSelected['selected'][0]}
 
+    }
+    */
+
+    fNewQuery = () => {
+        $(this.refs.divNewQuery).show();
+        this.props.toMainClearOK(true);
+        $(this.refs.dropSorgu).dropdown('clear');
+        $(this.refs.txtNewQuery).val("");
+        $(this.refs.txtAciklama).val("");
+        $(this.refs.txtSorgu).val("");
+        $(this.refs.lSorguName).text("Yeni Sorgu");
+
+    }
+
+    createNewSubQuery = () => {
+        this.props.toMainCreateNewSubQuery(true);
     }
 
 
@@ -171,7 +190,7 @@ export class QueryView extends React.Component<SorguProps,SorguStates> {
         var size=Object.keys(this.state.sorguList).length;
         for(var i = 0; i < size; i++)
         {
-            items.push(<DropdownItem name={this.state.sorguList[i].sName} id={this.state.sorguList[i].sName} myFunc={this.hello} />);
+            items.push(<DropdownItem key={i} name={this.state.sorguList[i].sName} id={this.state.sorguList[i].sName} myFunc={this.hello} />);
         }
 
 
@@ -184,6 +203,7 @@ export class QueryView extends React.Component<SorguProps,SorguStates> {
             <div>
 
                 <div className="field">
+
                     <label>Sorgu</label>
                     <div className="ui selection dropdown" ref="dropSorgu">
                         <input type="hidden" name="selSorgu"/>
@@ -195,6 +215,17 @@ export class QueryView extends React.Component<SorguProps,SorguStates> {
 
                         </div>
                     </div>
+                    <button type="button" className="ui green right floated button " onClick={this.fNewQuery}>
+                        <i className="zoom icon"></i>
+                        Yeni Sorgu Ekle
+                    </button>
+
+
+                </div>
+
+                <div className="field" ref="divNewQuery">
+                    <label>Yeni Sorgu İsmi</label>
+                    <input type="text" placeholder="Sorgu İsmi Giriniz" ref="txtNewQuery"/>
                 </div>
 
                 <div className="field">
@@ -226,7 +257,7 @@ export class QueryView extends React.Component<SorguProps,SorguStates> {
 
                 </div>
                 <div className="field">
-                    <button type="button" className="ui orange  right floated button " >
+                    <button type="button" className="ui orange  right floated button " onClick={this.createNewSubQuery} >
                         <i className="zoom icon"></i>
                         Alt Sorgu Ekle
                     </button>

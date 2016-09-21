@@ -14,7 +14,6 @@ public class Tetikleyici {
     public String aciklama;
     public String tetikleyiciIcerik;
     public boolean durum;
-    //public BildirimGrubu bildirimGrubu;
     public NotificationGroup notificationGroup;
     public enum TetikleyiciTipi{
         CRON, SIMPLE

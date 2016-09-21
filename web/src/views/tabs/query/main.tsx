@@ -17,7 +17,8 @@ export class MainQueryView extends React.Component {
     constructor(props, context: any) {
         super(props, context);
         this.mainPropsFunc = this.mainPropsFunc.bind(this);
-        this.state={stateSiblingArray:[], stateTrigger:{}}
+        this.mainClearOK = this.mainClearOK.bind(this);
+        this.state={stateSiblingArray:[], stateTrigger:{}, clear:false, createNewSubQuery:false}
     }
 
 
@@ -32,14 +33,35 @@ export class MainQueryView extends React.Component {
     }
 
 
+    mainClearOK = (val) => {
+        this.setState({clear:val});
+    }
+
+    mainCreateNewSubQuery = (val) =>{
+        this.setState({createNewSubQuery:val});
+    }
 
     render() {
         var altSorgu= [];
-        var size=this.state.stateSiblingArray.length;
+        if(this.state.clear) {
+            var size=0;
+        }
+        else{
+            var size=this.state.stateSiblingArray.length;
+        }
+
+
+
         console.log("all data=>",this.state.stateSiblingArray);
         for(var i = 0; i < size; i++)
         {
-            altSorgu.push(<SubQueryView name={this.state.stateSiblingArray[i]} labelName={i+1}/>);
+            altSorgu.push(<SubQueryView key={i} name={this.state.stateSiblingArray[i]} labelName={i+1} clear={this.state.clear}/>);
+        }
+
+        if(this.state.createNewSubQuery){
+            //size++;
+            altSorgu.push(<SubQueryView key={i} name="" labelName={size+1} clear={this.state.clear}/>);
+
         }
 
         return (
@@ -48,13 +70,13 @@ export class MainQueryView extends React.Component {
                 <div className="ui vertically divided grid">
                     <div className="three column row">
                         <div className="seven wide column">
-                            <QueryView toMainData={this.mainPropsFunc}/>
+                            <QueryView toMainData={this.mainPropsFunc} toMainClearOK={this.mainClearOK} toMainCreateNewSubQuery={this.mainCreateNewSubQuery}/>
                             {altSorgu}
                         </div>
                         <div className="nine wide column">
-                            <TriggerView triggerData={this.state.stateTrigger}/>
+                            <TriggerView triggerData={this.state.stateTrigger} clear={this.state.clear}/>
                             <br/>
-                            <NotificationView triggerData={this.state.stateTrigger.notificationGroup}/>
+                            <NotificationView triggerData={this.state.stateTrigger.notificationGroup} clear={this.state.clear}/>
                         </div>
                     </div>
                 </div>

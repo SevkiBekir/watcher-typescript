@@ -62,26 +62,29 @@ export class NotificationView extends React.Component<SorguProps,SorguStates> {
 
     }
 
+    countLetter = () => {
+
+        var maxLength = 160;
+        var length = $(this.refs.txtSMS).val().length;
+        if (length >= maxLength) {
+        $(this.refs.txtSMS).val($(this.refs.txtSMS).val().substring(0,maxLength));
+        $("#lRemain").text("Mesaj limiti doldu!");
+        $("#lRemain").addClass("red");
+        $("#lRemain").removeClass("orange");
+
+        }
+        else {
+            $("#lRemain").text(maxLength - length);
+        }
+
+    }
+
     controlSMSText = () => {
-      if(this.props.triggerData !==undefined)
-      {
-          if(this.props.triggerData.smsText !== null)
-          {
+      if(this.props.triggerData !==undefined) {
+          if(this.props.triggerData.smsText !== null) {
               $(this.refs.txtSMS).val(this.props.triggerData.smsText);
 
-              var maxLength = 160;
-              var length = $(this.refs.txtSMS).val().length;
-              if (length >= maxLength) {
-                  $(this.refs.txtSMS).val($(this.refs.txtSMS).val().substring(0,maxLength));
-                  $("#lRemain").text("Mesaj limiti doldu!");
-                  $("#lRemain").addClass("red");
-                  $("#lRemain").removeClass("orange");
-
-              }
-              else {
-                  $("#lRemain").text(maxLength - length);
-              }
-
+              this.countLetter();
           }
 
       }
@@ -122,12 +125,33 @@ export class NotificationView extends React.Component<SorguProps,SorguStates> {
         }
     }
 
+    clearAllData = () => {
+        if(this.props.clear) {
+            $(this.refs.chbWatcher).checkbox('uncheck');
+            $(this.refs.chbSMS).checkbox('uncheck');
+            $(this.refs.chbEmail).checkbox('uncheck');
+
+            $(this.refs.chbExcel).checkbox('uncheck');
+            $(this.refs.chbPDF).checkbox('uncheck');
+            $(this.refs.chbNone).checkbox('uncheck');
+
+
+            $(this.refs.txtEmail).val("");
+            $(this.refs.txtSMS).val("");
+            this.countLetter();
+            $(this.refs.search).dropdown('clear');
+        }
+
+
+    }
+
     render() {
         console.log("EMAIL - RENDER->",this.props.triggerData);
         this.controlEmailAttachedType();
         this.controlEmailText();
         this.controlSMSText();
         this.controlNotificationMethod();
+        this.clearAllData();
 
         if(this.props.triggerData !==undefined)
         {

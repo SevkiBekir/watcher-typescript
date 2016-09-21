@@ -13,12 +13,19 @@ export class SubQueryView extends React.Component<SorguProps,SorguStates> {
 
     componentDidMount(){
         $(this.refs.txtArea).val(this.props.name);
+
     }
 
+    fClearAllData = () => {
+        if(this.props.clear){
+            $(this.refs.txtArea).val("");
+        }
+    }
 
     render() {
 
         $(this.refs.txtArea).val(this.props.name);
+        this.fClearAllData();
 
         return (
             <div>

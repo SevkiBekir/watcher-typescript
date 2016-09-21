@@ -60,17 +60,42 @@ export class TriggerView extends React.Component<SorguProps,SorguStates> {
 
     }
 
+    fillAllTextbox = () => {
+        if(this.props.triggerData !== undefined)
+        {
+            $(this.refs.txtTriggerName).val(this.props.triggerData.tetikleyiciAdi);
+            $(this.refs.txtCronSimple).val(this.props.triggerData.tetikleyiciIcerik);
+            $(this.refs.txtTriggerExplanation).val(this.props.triggerData.aciklama);
+        }
+
+    }
+
+    clearAllData = () => {
+        if(this.props.clear){
+            $(this.refs.txtTriggerName).val("");
+            $(this.refs.dropTetikleyici).dropdown('clear');
+            $(this.refs.txtCronSimple).val("");
+            $(this.refs.txtTriggerExplanation).val("");
+            $(this.refs.chbBildirimEkle).checkbox('uncheck');
+            $(this.refs.chbDurum).checkbox('uncheck');
+        }
+    }
+
     render() {
         console.log(this.props);
+        this.fillAllTextbox();
         this.checkDurum();
         this.checkBildirimEkle();
         this.selectTetikleyiciTipi();
+
+        this.clearAllData();
+
 
         return (
             <div>
                 <div className="field">
                     <label>Tetikleyici Adı:</label>
-                    <input type="text" placeholder="Tetikleyici Adı Giriniz" value={this.props.triggerData.tetikleyiciAdi}/>
+                    <input type="text" placeholder="Tetikleyici Adı Giriniz" ref="txtTriggerName"/>
                 </div>
                 <div className="field">
                     <label>Tetikleyici Tipi</label>
@@ -90,11 +115,11 @@ export class TriggerView extends React.Component<SorguProps,SorguStates> {
                 </div>
                 <div className="field">
                     <label>CRON/SİMPLE İfadesi:</label>
-                    <input type="text" placeholder="CRON/SİMPLE İfadesi Giriniz" value={this.props.triggerData.tetikleyiciIcerik}/>
+                    <input type="text" placeholder="CRON/SİMPLE İfadesi Giriniz" ref="txtCronSimple" />
                 </div>
                 <div className="field">
                     <label>Açıklama</label>
-                    <input type="text" placeholder="Açıklama Giriniz" value={this.props.triggerData.aciklama}/>
+                    <input type="text" placeholder="Açıklama Giriniz" ref="txtTriggerExplanation"/>
                 </div>
                 <div className="field">
                     <div className="ui vertically divided grid">
