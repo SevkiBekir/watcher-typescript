@@ -7,7 +7,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 import java.util.List;
 
 /**
- * Created by ysatici on 03.08.2016.
+ * Created by SBK on 26.09.2016.
  */
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -15,12 +15,15 @@ public class PrivateConnection {
 
     @NotEmpty
     String _id;
-    public String userName;
-    public String anaSorgu;
-    public String aciklama;
-    public List<String> altSorguList;
-    public Tetikleyici tetikleyici;
-    public String sName;
+    public String connectionName;
+    public String databaseName;
+    public String host;
+    public String port;
+    public String serviceName;
+    public String username;
+    public String password;
+
 
 
 }
+

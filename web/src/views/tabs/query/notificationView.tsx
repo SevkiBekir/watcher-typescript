@@ -411,7 +411,7 @@ export class NotificationView extends React.Component {
                 </div>
                 <div className="field">
                     <label>Email Metni</label>
-                    <textarea rows="4" ref="txtEmail"></textarea>
+                    <textarea rows="4" ref="txtEmail" placeholder="Email metni giriniz"></textarea>
                 </div>
                 <div>
                     <label>SMS Metni</label>

@@ -7,7 +7,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 import java.util.List;
 
 /**
- * Created by ysatici on 03.08.2016.
+ * Created by SBK on 10.09.2016
  */
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)

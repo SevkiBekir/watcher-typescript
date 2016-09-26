@@ -124,7 +124,7 @@ export class MainQueryView extends React.Component {
 
 
 
-        console.log("all data=>",this.state.stateSiblingArray);
+
         for(var i = 0; i < size; i++)
         {
             altSorgu.push(<SubQueryView key={i} name={this.state.stateSiblingArray[i]} labelName={i+1} clear={this.state.clear}/>);
