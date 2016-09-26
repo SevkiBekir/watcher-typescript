@@ -8,8 +8,6 @@ export interface SorguProps {
 export interface SorguStates {
     sorguList:Array<Sorgu>;
     selectName:string;
+
 }
 
-export interface DropDownStates {
-    selectedName:string;
-}

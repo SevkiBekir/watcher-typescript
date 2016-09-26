@@ -1,6 +1,7 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import {SorguProps, SorguStates} from "../../dataInterfaces.tsx";
+import {Sorgu} from "../../dataClasses";
 
 
 
@@ -17,15 +18,28 @@ export class SubQueryView extends React.Component<SorguProps,SorguStates> {
     }
 
     fClearAllData = () => {
-        if(this.props.clear){
+        if(this.props.clear && !this.props.btnSave){
             $(this.refs.txtArea).val("");
         }
     }
 
-    render() {
+    getDataFromSubQueryView = () => {
+        var data={} as Sorgu;
+        data.altSorguList=[$('#gg').val()];
+        this.props.getData(data);
+        console.log("gönderilen datalar from sub query view-> ",data)
 
-        $(this.refs.txtArea).val(this.props.name);
+
+    }
+
+    render() {
+        if(this.props.btnSave) {
+            this.getDataFromSubQueryView();
+        }
+        else
+            $(this.refs.txtArea).val(this.props.name);
         this.fClearAllData();
+
 
         return (
             <div>
@@ -33,7 +47,7 @@ export class SubQueryView extends React.Component<SorguProps,SorguStates> {
                     <div className="field">
 
                         <label>Alt Sorgu {this.props.labelName}</label>
-                        <textarea rows="4" ref="txtArea"></textarea>
+                        <textarea rows="4" ref="txtArea" id="gg"></textarea>
                     </div>
                     <div className="inline fields">
                         <div className="field">

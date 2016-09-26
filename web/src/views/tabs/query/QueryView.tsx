@@ -174,17 +174,32 @@ export class QueryView extends React.Component<SorguProps,SorguStates> {
         $(this.refs.txtSorgu).val("");
         $(this.refs.lSorguName).text("Yeni Sorgu");
 
+
     }
 
     createNewSubQuery = () => {
         this.props.toMainCreateNewSubQuery(true);
     }
 
+    getDataFromQueryView = () => {
+        if(this.props.btnSave){
+            var data={} as Sorgu;
+            data.aciklama=$(this.refs.txtAciklama).val();
+            data.sName=$(this.refs.txtNewQuery).val();
+            data.anaSorgu=$(this.refs.txtSorgu).val();
+            this.props.getData(data);
+            console.log("gönderilen datalar -> ",data)
+        }
+        else
+            console.log("BUTONA BASILMADI");
+
+    }
+
 
 
     render() {
 
-
+        this.getDataFromQueryView();
 
         var items= [];
         var size=Object.keys(this.state.sorguList).length;

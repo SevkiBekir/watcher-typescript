@@ -1,8 +1,12 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import {SorguProps, SorguStates} from "../../dataInterfaces.tsx";
+import {NotificationGroup, BildirimYontemi, EmailEkTipi, Receiver} from "../../dataClasses.tsx";
 
-export class NotificationView extends React.Component<SorguProps,SorguStates> {
+var buttonInlneCss = {marginTop:'3%'};
+let durum=true;
+
+export class NotificationView extends React.Component {
 
 
     constructor(props: SorguProps, context: any) {
@@ -17,6 +21,16 @@ export class NotificationView extends React.Component<SorguProps,SorguStates> {
         $(this.refs.search).addClass("ui fluid search dropdown multiple");
         $(this.refs.search).dropdown();
         this.smsTextControl();
+        $(this.refs.divNewReceiver).hide();
+
+        $('.message .close')
+            .on('click', function() {
+                $(this)
+                    .closest('.message')
+                    .transition('fade')
+                ;
+            })
+        ;
 
     }
 
@@ -126,7 +140,7 @@ export class NotificationView extends React.Component<SorguProps,SorguStates> {
     }
 
     clearAllData = () => {
-        if(this.props.clear) {
+        if(this.props.clear && !this.props.btnSave) {
             $(this.refs.chbWatcher).checkbox('uncheck');
             $(this.refs.chbSMS).checkbox('uncheck');
             $(this.refs.chbEmail).checkbox('uncheck');
@@ -145,12 +159,133 @@ export class NotificationView extends React.Component<SorguProps,SorguStates> {
 
     }
 
+    clickedBtnSave = () => {
+        this.props.toMainClickedBtnSave(true);
+        durum=true;
+
+    }
+
+    getDataFromNotificationView = () => {
+        if(durum){
+            var data={} as NotificationGroup;
+
+
+            if($(this.refs.chbExcel).checkbox('is checked'))
+                data.emailAttachType="EXCEL";
+            else if($(this.refs.chbPDF).checkbox('is checked'))
+                data.emailAttachType="PDF";
+            else if($(this.refs.chbNone).checkbox('is checked'))
+                data.emailAttachType="HICBIRI";
+
+
+            data.notificationMethod=[];
+            if($(this.refs.chbWatcher).checkbox('is checked'))
+                data.notificationMethod.push("WATCHER");
+            if($(this.refs.chbSMS).checkbox('is checked'))
+                data.notificationMethod.push("SMS");
+            if($(this.refs.chbEmail).checkbox('is checked'))
+                data.notificationMethod.push("EMAIL");
+
+            data.smsText=$(this.refs.txtSMS).val();
+            data.emailText=$(this.refs.txtEmail).val();
+
+            data.receiver=[];
+            var $itemDetail;
+            $itemDetail = $(this.refs.search).dropdown("get item");
+
+            for(var i = 0; i<$itemDetail.length;i++){
+                var $item = $itemDetail[0][i];
+                if($item !== undefined){
+                    var $value = $item.attributes[1].nodeValue;
+                    var $name = $itemDetail[0][i].innerHTML;
+                    console.log("name ->",$name,"-> value -> ",$value);
+                    data.receiver.push(new Receiver($name,$value));
+                }
+
+            }
+
+
+
+            this.props.getData(data);
+            console.log("gönderilen datalar from notification view-> ",data);
+            durum=false;
+            this.props.toMainAllDataSent(true);
+            this.props.toMainClickedBtnSave(false);
+        }
+
+
+    }
+
+    newReceiver = () => {
+        $(this.refs.divNewReceiver).show();
+    }
+
+    validateEmail = (email) => {
+        var emailReg = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+        return emailReg.test( email );
+    }
+
+
+    addNewReceiver = () => {
+        var email=$(this.refs.txtNewReceiverEmail).val();
+        if(this.validateEmail(email)){
+            var $dropdown=$(this.refs.search);
+            $dropdown.append($("<option></option>")
+                .attr("value",$(this.refs.txtNewReceiverEmail).val())
+                .text($(this.refs.txtNewReceiverName).val()));
+            console.log("Email Validate :)");
+
+            var $divErrorMessage=$(this.refs.divErrorMessage);
+            if(!$divErrorMessage.find('.positive').length)
+                $divErrorMessage.append("<div class=\"ui positive message\"><i class=\"close icon\"></i><div class=\"header\">Kişi Eklendi!</div></div>");
+            var $posMessage=$divErrorMessage.children(".positive");
+            $posMessage.show();
+
+            setTimeout(function() {
+                $dropdown.dropdown("refresh");
+                $dropdown.dropdown("set selected", email);
+                $posMessage.hide();
+
+            }, 1000);
+
+            $(this.refs.txtNewReceiverEmail).val("");
+            $(this.refs.txtNewReceiverName).val("");
+
+
+
+        }
+        else{
+            var $divErrorMessage=$(this.refs.divErrorMessage);
+            if(!$divErrorMessage.find('.negative').length)
+                $divErrorMessage.append("<div class=\"ui negative message\"><i class=\"close icon\"></i><div class=\"header\">Hatalı Email!</div><p>Lütfen email standartlarına göre email adresi giriniz</p></div>");
+
+            var $negMessage=$divErrorMessage.children(".negative");
+            $negMessage.show();
+            console.log("Email Not Validate!");
+
+            setTimeout(function() {
+                $negMessage.hide();
+
+            }, 3000);
+        }
+
+
+
+
+    }
+
     render() {
-        console.log("EMAIL - RENDER->",this.props.triggerData);
-        this.controlEmailAttachedType();
-        this.controlEmailText();
-        this.controlSMSText();
-        this.controlNotificationMethod();
+        if(this.props.btnSave){
+            this.getDataFromNotificationView();
+        }
+        else{
+            this.controlEmailAttachedType();
+            this.controlEmailText();
+            this.controlSMSText();
+            this.controlNotificationMethod();
+        }
+
+
         this.clearAllData();
 
         if(this.props.triggerData !==undefined)
@@ -159,7 +294,7 @@ export class NotificationView extends React.Component<SorguProps,SorguStates> {
             var size=Object.keys(this.props.triggerData.receiver).length;
             for(var i = 0; i < size; i++)
             {
-                receiverItems.push( <option value={this.props.triggerData.receiver[i].value}>{this.props.triggerData.receiver[i].label}</option>);
+                receiverItems.push( <option key={i} value={this.props.triggerData.receiver[i].value}>{this.props.triggerData.receiver[i].label}</option>);
             }
         }
 
@@ -234,20 +369,47 @@ export class NotificationView extends React.Component<SorguProps,SorguStates> {
                         </div>
                     </div>
                 </div>
-                <div>
+                <div className="field">
                     <div>
 
                         <div>
                             <label>Alıcılar</label>
-                            <select multiple="" ref="search">
+                            <select multiple="" ref="search" id="search">
                                 <option value="">Kişi Ekle</option>
                                 {receiverItems}
                             </select>
 
                         </div>
+                        <div>
+                            <button type="button" className="ui green right floated button " onClick={this.newReceiver}>
+
+                                <i className="plus icon"></i>
+                                Yeni Alıcı Ekle
+                            </button>
+                        </div>
                     </div>
                 </div>
-                <div >
+                <br/>
+                <div className="field ui grid" ref="divNewReceiver">
+                    <div className="  seven wide column">
+                        <label>Alıcı İsim Soyisim</label>
+                        <input type="text" placeholder="İsim Soyisim Giriniz" ref="txtNewReceiverName"/>
+                    </div>
+                    <div className="  seven wide column">
+                        <label>Alıcı Email</label>
+                        <input type="text" placeholder="Email Giriniz" ref="txtNewReceiverEmail"/>
+                    </div>
+                    <div className=" two wide column" style={buttonInlneCss}>
+                        <button type="button" className="ui green circular icon button" data-tooltip="Ekle" onClick={this.addNewReceiver}>
+                            <i className="checkmark icon"></i>
+                        </button>
+                    </div>
+
+                </div>
+                <div className="field" ref="divErrorMessage" id="divErrorMessage">
+
+                </div>
+                <div className="field">
                     <label>Email Metni</label>
                     <textarea rows="4" ref="txtEmail"></textarea>
                 </div>
@@ -268,7 +430,7 @@ export class NotificationView extends React.Component<SorguProps,SorguStates> {
 
                         </div>
                         <div>
-                            <button className="ui green  right floated button ">
+                            <button type="button" className="ui green  right floated button " onClick={this.clickedBtnSave}>
                                 <i className="save icon"></i>
                                 Kaydet
                             </button>

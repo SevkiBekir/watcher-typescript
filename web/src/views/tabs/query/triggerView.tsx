@@ -1,6 +1,7 @@
 import * as React from "react";
 import {SorguProps, SorguStates} from "../../dataInterfaces.tsx";
 import * as ReactDOM from "react-dom";
+import { Tetikleyici} from "../../dataClasses";
 
 
 
@@ -71,7 +72,7 @@ export class TriggerView extends React.Component<SorguProps,SorguStates> {
     }
 
     clearAllData = () => {
-        if(this.props.clear){
+        if(this.props.clear && !this.props.btnSave){
             $(this.refs.txtTriggerName).val("");
             $(this.refs.dropTetikleyici).dropdown('clear');
             $(this.refs.txtCronSimple).val("");
@@ -81,14 +82,34 @@ export class TriggerView extends React.Component<SorguProps,SorguStates> {
         }
     }
 
+    getDataFromTriggerView = () => {
+        var data={} as Tetikleyici;
+        data.tetikleyiciAdi=$(this.refs.txtTriggerName).val();
+        data.tetikleyiciIcerik=$(this.refs.txtCronSimple).val();
+        data.aciklama=$(this.refs.txtTriggerExplanation).val();
+        data.durum=$(this.refs.chbDurum).checkbox('is checked');
+        data.bildirimEkle=$(this.refs.chbBildirimEkle).checkbox('is checked');
+        data.tip=$(this.refs.dropTetikleyici).dropdown('get value');
+        this.props.getData(data);
+        console.log("gönderilen datalar from trigger view-> ",data)
+
+    }
     render() {
-        console.log(this.props);
-        this.fillAllTextbox();
-        this.checkDurum();
-        this.checkBildirimEkle();
-        this.selectTetikleyiciTipi();
+        if(this.props.btnSave){
+            this.getDataFromTriggerView();
+        }
+        else{
+            this.fillAllTextbox();
+            this.checkDurum();
+            this.checkBildirimEkle();
+            this.selectTetikleyiciTipi();
+        }
+
+
+
 
         this.clearAllData();
+
 
 
         return (
