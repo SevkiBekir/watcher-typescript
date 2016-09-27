@@ -27,4 +27,9 @@ public class PrivateConnectionService {
         return ResponseEntity.ok(this.repository.save(privateConnection));
     }
 
+    @RequestMapping(value = "/findAll",method = RequestMethod.GET)
+    public ResponseEntity findAll (){
+        return ResponseEntity.ok(this.repository.findAll());
+    }
+
 }

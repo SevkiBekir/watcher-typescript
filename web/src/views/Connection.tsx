@@ -16,7 +16,7 @@ export class PrivateConnection {
                 serviceName:string,
                 username:string,
                 password:string) {
-        this.connectionName = connectionName
+        this.connectionName = connectionName;
         this.databaseName = databaseName;
         this.host = host;
         this.port = port;
